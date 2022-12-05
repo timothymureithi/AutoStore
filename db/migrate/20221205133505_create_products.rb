@@ -7,9 +7,6 @@ class CreateProducts < ActiveRecord::Migration[7.0]
       t.integer :quantity
       t.string :color
       t.string :size
-      t.boolean :active_listing
-      t.integer :user_id
-      t.integer :category_id
       t.timestamps
     end
   end
