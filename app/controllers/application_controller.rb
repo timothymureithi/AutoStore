@@ -30,4 +30,6 @@ class ApplicationController < ActionController::Base
         render json: { errors: "user not authorized" }, status: :unauthorized
       end
 
+    
+
 end
