@@ -93,7 +93,14 @@ end
         Product.find_by(id: params[:product_id])
       end
 
-      
-    
+      def find_cart_by_session
+        Cart.find(session[:cart_id])
+      end
+
+      def add_product(guestCart)
+  add_product_to_cart = CartProduct.new(cart_id: guestCart[:id], product_id: params[:product_id], item_quantity: params[:item_quantity])
+    if (add_product_to_cart.save)
+      update_cart_on_add(guestCart, find_product_by_params)  
+        end
     
 end
