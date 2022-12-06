@@ -50,7 +50,7 @@ class CartProductsController < ApplicationController
         if (product[:quantity] > 0)
             product.update(quantity: (product[:quantity] - cart_product[:item_quantity]))
         else
-            render json: { error: ["Item is out of stock"]}
+            render json: { error: ["This product is out of stock"]}
         end
     end
     existing_products.destroy_all
@@ -58,5 +58,28 @@ end
 
 
       private
+
+      def cart_product_params
+        params.require(:cart_product).permit(:cart_id, :product_id, :item_quantity)
+      end
+
+      def update_cart_on_add(cart, product)
+        cart.update(total_items: cart[:total_items] + params[:item_quantity].to_i,
+                    total_amount: cart[:total_amount].to_i + product[:price].to_i)
+      end
+
+      def update_cart_on_delete(cart, product)
+        cart.update(total_items: cart[:total_items] - product[:item_quantity],
+                    total_amount: cart[:total_amount] - (product.product[:price].to_i * product[:item_quantity]).to_i)
+      end
+
+      def existing_products
+        CartProduct.where(cart_id: session[:cart_id])
+      end
+    
+      def existing_product
+        existing_products.find_by(product_id: params[:product_id])
+      end
+      
     
 end
