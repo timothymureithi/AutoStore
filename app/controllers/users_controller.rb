@@ -10,6 +10,17 @@ class UsersController < ApplicationController
         render json: current_user, status: :ok 
     end
 
+    def create
+        user = User.create!(user_params)
+        session[:user_id] = user.id
+        Cart.create!(total_items: 0, total_amount: 0, user_id: user.id)
+        move_cart_products_guest_to_user(user)
+        if (!session[:cart_id])
+          session[:cart_id] = user.cart.id
+        end
+        render json: user, status: :created
+      end
+
     def update
         user = User.find_by(id: session[:user_id])
         user.update(user_params)
@@ -22,6 +33,13 @@ class UsersController < ApplicationController
         head :no_content
     end
  
+    def get_orders
+        orderItems = current_user.order_items
+        orders = orderItems.map do |order_item|
+          order_item.order
+        end.uniq
+        render json: orders
+      end
   
     private
   
