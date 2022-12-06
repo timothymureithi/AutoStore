@@ -42,7 +42,20 @@ class CartProductsController < ApplicationController
         else
             Order.create
       end
-      
+      order.update(total_amount: find_cart_by_session[:total_amount])
+      find_cart_by_session.update(total_amount: 0, total_items: 0)
+      existing_products.each do |cart_product|
+        product = Product.find_by(id: cart_product[:product_id])
+        OrderItem.create(order_id: order.id, product_id: product.id, item_quantity: cart_product[:item_quantity])
+        if (product[:quantity] > 0)
+            product.update(quantity: (product[:quantity] - cart_product[:item_quantity]))
+        else
+            render json: { error: ["Item is out of stock"]}
+        end
+    end
+    existing_products.destroy_all
+end
+
 
       private
     
