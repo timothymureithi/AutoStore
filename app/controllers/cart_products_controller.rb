@@ -80,6 +80,20 @@ end
       def existing_product
         existing_products.find_by(product_id: params[:product_id])
       end
+
+      def product_exists?
+        existing_products.any? { |prod| prod[:product_id] == params[:product_id] }
+      end
+    
+      def update_item_quantity(existing_product)
+        existing_product.update(item_quantity: existing_product[:item_quantity] + params[:item_quantity].to_i)
+      end
+    
+      def find_product_by_params
+        Product.find_by(id: params[:product_id])
+      end
+
       
+    
     
 end
