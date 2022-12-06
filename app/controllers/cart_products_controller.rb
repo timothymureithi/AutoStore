@@ -36,6 +36,13 @@ class CartProductsController < ApplicationController
         head :no_content
       end
       
+      def destroy_all
+        order = if (current_user)
+            Order.create(user_id: current_user.id)
+        else
+            Order.create
+      end
+      
 
       private
     
