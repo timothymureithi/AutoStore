@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
     rescue_from ActiveRecord::RecordInvalid, with: :record_invalid
-    before_action :authorize 
+  #  before_action :authorize 
 
     def current_user
         User.find_by(id: session[:user_id])
@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
         Cart.find_by(id: session[:cart_id])
     end
 
+#private
     private
 
     def record_not_found
@@ -18,6 +19,14 @@ class ApplicationController < ActionController::Base
     end
 
     def user_not_authorized
+        render json: { errors: "user not authorized" }, status: :unauthorized
+      end
+
+      def record_invalid(exception)
+        render json: { errors: [exception.record.errors.full_messages] }, status: :unprocessable_entity
+      end
+
+      def user_not_authorized
         render json: { errors: "user not authorized" }, status: :unauthorized
       end
 
